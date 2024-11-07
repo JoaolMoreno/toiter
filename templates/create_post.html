@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Toitar{% endblock %}
+
+{% block content %}
+<div class="create-post-container">
+    <h1>Toitar</h1>
+    <form action="{{ url_for('create_post') }}" method="post" enctype="multipart/form-data">
+        <label for="content">Post Content:</label>
+        <textarea id="content" name="content" rows="4" required></textarea>
+    
+        <!-- Campo para upload de mídia -->
+        <label for="media">Upload Image or Video:</label>
+        <input type="file" id="media" name="media" accept="image/*,video/*">
+    
+        <button type="submit">Post</button>
+    </form>
+    
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Toiter{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            {% if session.get('username') %}
+                <a href="{{ url_for('logout') }}">Log Off</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Log In</a>
+            {% endif %}
+        </div>
+        <div class="header-center">
+            <h1>Toiter</h1>
+        </div>
+    </header>
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Botão de Criar Post -->
+    {% if session.get('username') %}
+        <a href="{{ url_for('create_post') }}" class="create-post-button">
+            <span>+</span>
+        </a>
+    {% endif %}
+</body>
+</html>

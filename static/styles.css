@@ -1,0 +1,252 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: #e6ecf0;
+    color: #14171a;
+}
+
+/* Header */
+header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e1e8ed;
+    padding: 10px 20px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-left,
+.header-center,
+.header-right {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.header-left,
+.header-right {
+    width: 25%;
+    text-align: left;
+}
+
+.header-center {
+    width: 50%;
+    text-align: center;
+}
+
+.header-center h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1da1f2;
+}
+
+/* Botão flutuante para criar um novo post */
+.create-post-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #1da1f2;
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 24px;
+    line-height: 50px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+}
+
+.create-post-button:hover {
+    background-color: #0d95e8;
+}
+
+.create-post-button span {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.cancel-button {
+    display: inline-block;
+    background-color: #e0245e; /* Vermelho */
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.cancel-button:hover {
+    background-color: #c21c4e; /* Vermelho mais escuro ao passar o cursor */
+}
+
+/* Conteúdo Principal */
+.content {
+    padding: 70px 20px 20px 20px; /* Ajusta para considerar o header fixo */
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Posts */
+.post, .reply {
+    background-color: #ffffff;
+    border: 1px solid #e1e8ed;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.post .like-form,
+.reply .like-form {
+    display: inline-block;
+}
+
+.post a,
+.reply a {
+    color: #1da1f2;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.replies {
+    margin-left: 20px;
+    margin-top: 10px;
+}
+
+/* Botões */
+button {
+    background-color: #1da1f2;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    cursor: pointer;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+button:hover {
+    background-color: #0d95e8;
+}
+
+/* Formulários */
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #e1e8ed;
+    border-radius: 5px;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: #1da1f2;
+}
+
+/* Containers */
+.login-container,
+.create-post-container,
+.reply-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #e1e8ed;
+    border-radius: 5px;
+    margin-top: 70px; /* Ajusta para considerar o header fixo */
+}
+.reply-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+/* Nome do usuário e conteúdo do post original */
+.username {
+    font-weight: bold;
+    font-size: 16px;
+    color: #1da1f2;
+    margin-bottom: 5px;
+}
+
+.original-content {
+    font-size: 14px;
+    color: #14171a;
+    margin-bottom: 10px;
+}
+
+/* Campo de resposta e botões */
+textarea#content {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 14px;
+    border: 1px solid #e1e8ed;
+    border-radius: 5px;
+    resize: none;
+}
+
+textarea#content::placeholder {
+    color: #657786;
+}
+
+
+/* Links */
+a {
+    color: #1da1f2;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Footer (se necessário) */
+footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 12px;
+    color: #657786;
+}
+
+.posts {
+    margin-top: 20px;
+}
+
+.post {
+    background-color: #ffffff;
+    border: 1px solid #e1e8ed;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.post .post {
+    margin-top: 10px;
+    border-color: #cfd9de;
+}
+
+.like-form, .post a {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.like-form button {
+    margin-right: 5px;
+}
+/* Estilo para imagem e vídeo do post */
+.post-media {
+    max-width: 100%;  /* Para garantir que a mídia não ultrapasse a largura do contêiner */
+    max-height: 500px;  /* Altura máxima para garantir uma exibição confortável */
+    margin-top: 10px;
+    border-radius: 5px;
+    display: block;
+}

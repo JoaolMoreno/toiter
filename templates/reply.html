@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Reply - Toiter{% endblock %}
+
+{% block content %}
+<div class="reply-container">
+    <!-- Exibição do post original -->
+    <p class="username">{{ username }}</p>
+    <p class="original-content">{{ original_content }}</p>
+    <hr>
+
+    <!-- Campo de resposta -->
+    <form action="{{ url_for('reply', post_id=post_id) }}" method="post">
+        <textarea id="content" name="content" rows="4" placeholder="Escreva sua resposta" required></textarea>
+        
+        <!-- Botões de ação -->
+        <div class="reply-actions">
+            <a href="{{ url_for('home') }}" class="cancel-button">Cancelar</a>
+            <button type="submit">Responder</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
