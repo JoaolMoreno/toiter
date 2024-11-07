@@ -2,3 +2,4 @@ Flask
 pyodbc
 python-magic
 pillow
+python-dotenv
