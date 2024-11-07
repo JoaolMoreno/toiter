@@ -2,10 +2,15 @@ from datetime import datetime
 from PIL import Image
 import os
 import uuid
-from flask import Flask, flash, render_template, request, redirect, send_from_directory, url_for, session
+from flask import Flask, flash, jsonify, render_template, request, redirect, send_from_directory, url_for, session
 import pyodbc
 import magic
 from werkzeug.utils import secure_filename
+import logging
+
+# Configuração do logger
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -15,10 +20,10 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'webm'}
 
 # Configuração da conexão com o SQL Server
-DB_HOST = 'db'
-DB_NAME = 'TwitterClone'
-DB_USER = 'sa'
-DB_PASSWORD = 'YourStrong!Passw0rd'
+DB_HOST = os.getenv('DB_HOST')
+DB_NAME = os.getenv('DB_NAME')
+DB_USER = os.getenv('DB_USER')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
 
 def get_db_connection():
     conn_str = f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={DB_HOST};DATABASE={DB_NAME};UID={DB_USER};PWD={DB_PASSWORD}"
@@ -65,17 +70,17 @@ def allowed_file(filename, filetype, file):
     else:
         return False
 
-
 @app.route('/')
 def home():
     if 'username' not in session:
+        logger.info('User not logged in, redirecting to login page.')
         return redirect(url_for('login'))
     conn = get_db_connection()
     cursor = conn.cursor()
 
     # Recupera todos os posts e aplica a formatação de tempo
     cursor.execute("""
-        SELECT id, username, content, timestamp, parent_post_id,media_filename, media_type
+        SELECT id, username, content, timestamp, parent_post_id, media_filename, media_type
         FROM posts
         ORDER BY timestamp ASC
     """)
@@ -116,11 +121,13 @@ def home():
     likes_count = {row.post_id: row.like_count for row in likes_data}
     conn.close()
 
+    logger.info('Rendering home page for user: %s', session['username'])
     return render_template('home.html', posts=tree_posts, liked_posts=liked_posts, likes_count=likes_count)
 
 @app.route('/reply/<int:post_id>', methods=['GET', 'POST'])
 def reply(post_id):
     if 'username' not in session:
+        logger.info('User not logged in, redirecting to login page.')
         return redirect(url_for('login'))
     
     conn = get_db_connection()
@@ -138,9 +145,11 @@ def reply(post_id):
         """, (session['username'], content, post_id))
         conn.commit()
         conn.close()
+        logger.info('User %s replied to post %d', session['username'], post_id)
         return redirect(url_for('home'))
     else:
         conn.close()
+        logger.info('Rendering reply page for post %d', post_id)
         return render_template('reply.html', post_id=post_id, username=original_post.username, original_content=original_post.content)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -161,17 +170,20 @@ def login():
         
         conn.close()
         session['username'] = username
+        logger.info('User %s logged in', username)
         return redirect(url_for('home'))
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
+    logger.info('User %s logged out', session.get('username'))
     session.pop('username', None)
     return redirect(url_for('login'))
 
 @app.route('/create_post', methods=['GET', 'POST'])
 def create_post():
     if 'username' not in session:
+        logger.info('User not logged in, redirecting to login page.')
         return redirect(url_for('login'))
     if request.method == 'POST':
         content = request.form['content']
@@ -181,7 +193,7 @@ def create_post():
         # Verifica se o arquivo foi enviado
         if 'media' in request.files:
             file = request.files['media']
-            if file:
+            if file and file.filename != '':
                 filename = secure_filename(file.filename)
                 ext = filename.rsplit('.', 1)[1].lower()
                 if ext in {'png', 'jpg', 'jpeg', 'gif'}:
@@ -190,6 +202,7 @@ def create_post():
                     filetype = 'video'
                 else:
                     flash('Tipo de arquivo não permitido.')
+                    logger.warning('Invalid file type uploaded by user %s', session['username'])
                     return redirect(request.url)
 
                 if allowed_file(filename, filetype, file):
@@ -203,7 +216,7 @@ def create_post():
                         if image.width > max_width:
                             ratio = max_width / image.width
                             new_height = int(image.height * ratio)
-                            image = image.resize((max_width, new_height), Image.ANTIALIAS)
+                            image = image.resize((max_width, new_height), Image.LANCZOS)
                         image.save(file_path)
                     else:
                         # Salva diretamente se for um vídeo
@@ -213,9 +226,11 @@ def create_post():
                     media_type = filetype
                 else:
                     flash('Arquivo inválido ou corrompido.')
+                    logger.warning('Invalid or corrupted file uploaded by user %s', session['username'])
                     return redirect(request.url)
-            else:
+            elif file and file.filename == '':
                 flash('Nenhum arquivo selecionado.')
+                logger.warning('No file selected by user %s', session['username'])
                 return redirect(request.url)
 
         conn = get_db_connection()
@@ -226,14 +241,16 @@ def create_post():
         """, (session['username'], content, media_filename, media_type))
         conn.commit()
         conn.close()
+        logger.info('User %s created a new post', session['username'])
         return redirect(url_for('home'))
     return render_template('create_post.html')
-
 
 @app.route('/like/<int:post_id>', methods=['POST'])
 def like_post(post_id):
     if 'username' not in session:
-        return redirect(url_for('login'))
+        logger.info('User not logged in, returning error.')
+        return jsonify({'error': 'User not logged in'}), 401
+
     conn = get_db_connection()
     cursor = conn.cursor()
     
@@ -244,17 +261,30 @@ def like_post(post_id):
     if like:
         # Remove o like se ele já existir (unlike)
         cursor.execute("DELETE FROM likes WHERE post_id = ? AND username = ?", (post_id, session['username']))
+        liked = False
+        logger.info('User %s unliked post %d', session['username'], post_id)
     else:
         # Adiciona o like se ele não existir
         cursor.execute("INSERT INTO likes (post_id, username) VALUES (?, ?)", (post_id, session['username']))
+        liked = True
+        logger.info('User %s liked post %d', session['username'], post_id)
+    
+    # Recontar o número de likes
+    cursor.execute("SELECT COUNT(*) FROM likes WHERE post_id = ?", (post_id,))
+    likes_count = cursor.fetchone()[0]
     
     conn.commit()
     conn.close()
-    return redirect(url_for('home'))
+
+    return jsonify({'liked': liked, 'likes_count': likes_count})
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
+    logger.info('File %s requested for download', filename)
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 if __name__ == '__main__':
+    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+        os.makedirs(app.config['UPLOAD_FOLDER'])
+    logger.info('Starting the Flask application')
     app.run(host='0.0.0.0', debug=True)

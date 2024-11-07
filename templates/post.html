@@ -1,10 +1,12 @@
 <div class="post" style="margin-left: {{ level * 20 }}px;">
+    <p class="post-meta">{{ post_var.username }} · {{ post_var.formatted_time }}</p>
     <p>{{ post_var.content }}</p>
 
     <!-- Exibição da mídia do post -->
     {% if post_var.media_filename %}
         {% if post_var.media_type == 'image' %}
             <img src="{{ url_for('uploaded_file', filename=post_var.media_filename) }}" alt="Post Image" class="post-media">
+            <br>
         {% elif post_var.media_type == 'video' %}
             <video controls class="post-media">
                 <source src="{{ url_for('uploaded_file', filename=post_var.media_filename) }}" type="video/{{ post_var.media_filename.rsplit('.', 1)[1] }}">
@@ -13,16 +15,18 @@
         {% endif %}
     {% endif %}
 
-    <p class="post-meta">{{ post_var.username }} · {{ post_var.formatted_time }}</p>
-    <form action="{{ url_for('like_post', post_id=post_var.id) }}" method="post" class="like-form">
-        {% if post_var.id in liked_posts %}
-            <button type="submit">Unlike</button>
-        {% else %}
-            <button type="submit">Like</button>
-        {% endif %}
-        <span>{{ likes_count.get(post_var.id, 0) }} likes</span>
-    </form>
-    <a href="{{ url_for('reply', post_id=post_var.id) }}">Reply</a>
+    <div class="post-actions">
+        <!-- Botão de Like com ID do Post -->
+        <button class="like-button" data-post-id="{{ post_var.id }}">
+            {% if post_var.id in liked_posts %}
+                Unlike
+            {% else %}
+                Like
+            {% endif %}
+        </button>
+        <span class="like-count">{{ likes_count.get(post_var.id, 0) }} likes</span>
+        <a href="{{ url_for('reply', post_id=post_var.id) }}">Reply</a>
+    </div>
 </div>
 
 {% if post_var.children %}
