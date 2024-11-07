@@ -5,13 +5,36 @@
     box-sizing: border-box;
 }
 
+/* Estilos Gerais */
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-color: #e6ecf0;
     color: #14171a;
 }
 
-/* Header */
+a {
+    color: #1da1f2;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+button {
+    background-color: #1da1f2;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    cursor: pointer;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+button:hover {
+    background-color: #0d95e8;
+}
+
 header {
     background-color: #ffffff;
     border-bottom: 1px solid #e1e8ed;
@@ -20,24 +43,27 @@ header {
     width: 100%;
     top: 0;
     z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Distribui os itens */
 }
 
 .header-left,
 .header-center,
 .header-right {
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.header-left,
-.header-right {
-    width: 25%;
-    text-align: left;
+    flex: 1; /* Distribui o espaço igualmente */
 }
 
 .header-center {
-    width: 50%;
     text-align: center;
+}
+
+.header-left {
+    text-align: left;
+}
+
+.header-right {
+    text-align: right;
 }
 
 .header-center h1 {
@@ -72,6 +98,7 @@ header {
     vertical-align: middle;
 }
 
+/* Botão Cancelar */
 .cancel-button {
     display: inline-block;
     background-color: #e0245e; /* Vermelho */
@@ -90,12 +117,36 @@ header {
 /* Conteúdo Principal */
 .content {
     padding: 70px 20px 20px 20px; /* Ajusta para considerar o header fixo */
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
+/* Containers */
+.login-container,
+.create-post-container,
+.reply-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #e1e8ed;
+    border-radius: 5px;
+    margin-top: 70px; /* Ajusta para considerar o header fixo */
+}
+
+.reply-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
 /* Posts */
-.post, .reply {
+.posts {
+    margin-top: 20px;
+}
+
+.post,
+.reply {
     background-color: #ffffff;
     border: 1px solid #e1e8ed;
     padding: 10px;
@@ -103,9 +154,9 @@ header {
     border-radius: 5px;
 }
 
-.post .like-form,
-.reply .like-form {
-    display: inline-block;
+.post .post {
+    margin-top: 10px;
+    border-color: #cfd9de;
 }
 
 .post a,
@@ -115,24 +166,37 @@ header {
     margin-left: 10px;
 }
 
-.replies {
-    margin-left: 20px;
+.post .like-form,
+.reply .like-form {
+    display: inline-block;
+}
+
+.like-form,
+.post-actions a {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.like-form button {
+    margin-right: 5px;
+}
+
+.post-media {
+    max-width: 100%;  /* Garante que a mídia não ultrapasse a largura do contêiner */
+    max-height: 500px;  /* Altura máxima para exibição confortável */
     margin-top: 10px;
+    border-radius: 5px;
+    display: block;
 }
 
-/* Botões */
-button {
-    background-color: #1da1f2;
-    color: white;
-    border: none;
-    padding: 5px 15px;
-    cursor: pointer;
-    border-radius: 20px;
+.post-meta {
     font-size: 14px;
+    color: #657786;
+    margin-bottom: 5px;
 }
 
-button:hover {
-    background-color: #0d95e8;
+.post-actions {
+    margin-top: 10px;
 }
 
 /* Formulários */
@@ -151,22 +215,12 @@ textarea:focus {
     border-color: #1da1f2;
 }
 
-/* Containers */
-.login-container,
-.create-post-container,
-.reply-container {
-    max-width: 600px;
-    margin: 0 auto;
-    background-color: #ffffff;
-    padding: 20px;
-    border: 1px solid #e1e8ed;
-    border-radius: 5px;
-    margin-top: 70px; /* Ajusta para considerar o header fixo */
+textarea#content {
+    resize: none;
 }
-.reply-actions {
-    margin-top: 10px;
-    display: flex;
-    gap: 10px;
+
+textarea#content::placeholder {
+    color: #657786;
 }
 
 /* Nome do usuário e conteúdo do post original */
@@ -183,70 +237,66 @@ textarea:focus {
     margin-bottom: 10px;
 }
 
-/* Campo de resposta e botões */
-textarea#content {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    font-size: 14px;
-    border: 1px solid #e1e8ed;
-    border-radius: 5px;
-    resize: none;
-}
+/* Responsividade */
+@media screen and (max-width: 600px) {
+    header {
+        padding: 10px;
+        flex-direction: column;
+        align-items: center;
+    }
 
-textarea#content::placeholder {
-    color: #657786;
-}
+    .header-left,
+    .header-right {
+        display: none; /* Esconde elementos opcionais no mobile */
+        align-items: center;
+        justify-content: center;
+    }
 
+    .header-center {
+        flex: none;
+    }
 
-/* Links */
-a {
-    color: #1da1f2;
-    text-decoration: none;
-}
+    .header-center h1 {
+        font-size: 20px;
+    }
 
-a:hover {
-    text-decoration: underline;
-}
+    .content {
+        padding: 80px 10px 20px 10px;
+    }
 
-/* Footer (se necessário) */
-footer {
-    text-align: center;
-    padding: 20px;
-    font-size: 12px;
-    color: #657786;
-}
+    .create-post-button {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        line-height: 40px;
+        bottom: 15px;
+        right: 15px;
+    }
 
-.posts {
-    margin-top: 20px;
-}
+    .post,
+    .reply {
+        padding: 10px 5px;
+    }
 
-.post {
-    background-color: #ffffff;
-    border: 1px solid #e1e8ed;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-}
+    .post-meta {
+        font-size: 12px;
+    }
 
-.post .post {
-    margin-top: 10px;
-    border-color: #cfd9de;
-}
+    .post-actions button,
+    .cancel-button,
+    button {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
 
-.like-form, .post a {
-    display: inline-block;
-    margin-right: 10px;
-}
+    .post-media {
+        max-height: 300px;
+    }
 
-.like-form button {
-    margin-right: 5px;
-}
-/* Estilo para imagem e vídeo do post */
-.post-media {
-    max-width: 100%;  /* Para garantir que a mídia não ultrapasse a largura do contêiner */
-    max-height: 500px;  /* Altura máxima para garantir uma exibição confortável */
-    margin-top: 10px;
-    border-radius: 5px;
-    display: block;
+    .login-container,
+    .create-post-container,
+    .reply-container {
+        margin-top: 80px;
+        padding: 15px;
+    }
 }

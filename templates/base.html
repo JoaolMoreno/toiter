@@ -17,6 +17,13 @@
         <div class="header-center">
             <h1>Toiter</h1>
         </div>
+        <div class="header-right">
+            {% if session.get('username') %}
+                <p>Logado Como {{ session['username'] }}</p>
+            {% else %}
+                <a>Registrar</a>
+            {% endif %}
+        </div>
     </header>
     <div class="content">
         {% block content %}{% endblock %}
@@ -28,5 +35,49 @@
             <span>+</span>
         </a>
     {% endif %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const likeButtons = document.querySelectorAll('.like-button');
+        
+            likeButtons.forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();  // Impede o comportamento padrão do botão
+        
+                    const postId = this.getAttribute('data-post-id');
+                    const buttonElement = this;
+                    const likeCountSpan = this.parentElement.querySelector('.like-count');
+        
+                    // Envia a requisição AJAX para curtir/descurtir o post
+                    fetch(`/like/${postId}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        credentials: 'same-origin'
+                    })
+                    .then(function(response) {
+                        if (!response.ok) {
+                            throw new Error('Erro na requisição');
+                        }
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            // Atualiza o texto do botão com base no estado atual
+                            buttonElement.textContent = data.liked ? 'Unlike' : 'Like';
+                            // Atualiza a contagem de likes
+                            likeCountSpan.textContent = data.likes_count + ' likes';
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('Erro:', error);
+                    });
+                });
+            });
+        });
+    </script>
+        
 </body>
 </html>
