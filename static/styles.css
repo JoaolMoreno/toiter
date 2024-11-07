@@ -45,13 +45,13 @@ header {
     z-index: 1000;
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Distribui os itens */
+    justify-content: space-between;
 }
 
 .header-left,
 .header-center,
 .header-right {
-    flex: 1; /* Distribui o espaço igualmente */
+    flex: 1;
 }
 
 .header-center {
@@ -101,7 +101,7 @@ header {
 /* Botão Cancelar */
 .cancel-button {
     display: inline-block;
-    background-color: #e0245e; /* Vermelho */
+    background-color: #e0245e;
     color: white;
     padding: 5px 15px;
     border-radius: 20px;
@@ -111,12 +111,12 @@ header {
 }
 
 .cancel-button:hover {
-    background-color: #c21c4e; /* Vermelho mais escuro ao passar o cursor */
+    background-color: #c21c4e;
 }
 
 /* Conteúdo Principal */
 .content {
-    padding: 70px 20px 20px 20px; /* Ajusta para considerar o header fixo */
+    padding: 70px 20px 20px 20px;
     max-width: 800px;
     margin: 0 auto;
 }
@@ -131,7 +131,7 @@ header {
     padding: 20px;
     border: 1px solid #e1e8ed;
     border-radius: 5px;
-    margin-top: 70px; /* Ajusta para considerar o header fixo */
+    margin-top: 70px;
 }
 
 .reply-actions {
@@ -182,8 +182,8 @@ header {
 }
 
 .post-media {
-    max-width: 100%;  /* Garante que a mídia não ultrapasse a largura do contêiner */
-    max-height: 500px;  /* Altura máxima para exibição confortável */
+    max-width: 100%;
+    max-height: 500px;
     margin-top: 10px;
     border-radius: 5px;
     display: block;
@@ -238,7 +238,7 @@ textarea#content::placeholder {
 }
 
 /* Responsividade */
-@media screen and (max-width: 600px) {
+@media screen and (device-width: 428px) {
     header {
         padding: 10px;
         flex-direction: column;
@@ -247,56 +247,77 @@ textarea#content::placeholder {
 
     .header-left,
     .header-right {
-        display: none; /* Esconde elementos opcionais no mobile */
-        align-items: center;
-        justify-content: center;
-    }
-
-    .header-center {
-        flex: none;
+        display: none;
     }
 
     .header-center h1 {
-        font-size: 20px;
+        font-size: 32px;
     }
 
     .content {
-        padding: 80px 10px 20px 10px;
+        padding: 100px 10px 30px 10px;
+        max-width: 90%;
     }
 
     .create-post-button {
-        width: 40px;
-        height: 40px;
-        font-size: 20px;
-        line-height: 40px;
-        bottom: 15px;
-        right: 15px;
+        width: 80px;
+        height: 80px;
+        font-size: 36px;
+        line-height: 80px;
+        bottom: 20px;
+        right: 20px;
     }
 
     .post,
     .reply {
-        padding: 10px 5px;
+        padding: 20px 10px;
+        font-size: 22px;
+    }
+
+    body {
+        font-size: 22px;
     }
 
     .post-meta {
-        font-size: 12px;
+        font-size: 20px;
     }
 
     .post-actions button,
     .cancel-button,
     button {
-        padding: 5px 10px;
-        font-size: 12px;
+        padding: 15px 25px;
+        font-size: 24px;
+    }
+
+    .post-actions a,
+    .reply a {
+        font-size: 24px;
+        padding: 10px 20px;
+    }
+
+    .username {
+        font-size: 26px;
+    }
+
+    .original-content {
+        font-size: 22px;
+    }
+
+    input[type="text"],
+    textarea {
+        font-size: 22px;
+        padding: 15px;
     }
 
     .post-media {
-        max-height: 300px;
+        max-height: 500px;
     }
 
     .login-container,
     .create-post-container,
     .reply-container {
+        max-width: 90%;
         margin-top: 80px;
-        padding: 15px;
+        padding: 25px;
     }
 }
